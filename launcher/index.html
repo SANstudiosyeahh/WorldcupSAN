@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldCup Launcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .launcher {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            margin: 10px;
+            min-width: 200px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+        }
+
+        .download-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .system-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .version {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="launcher">
+        <div class="logo">⚽</div>
+        <h1>WorldCup SAN</h1>
+        <p class="subtitle">Simulador de Futebol Mundial</p>
+        
+        <button class="download-btn" id="downloadBtn" onclick="startDownload()">
+            🚀 Baixar e Jogar
+        </button>
+        
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="status" id="status">Preparando download...</div>
+        </div>
+        
+        <div class="system-info">
+            <p>🖥️ Sistema: <span id="systemInfo">Detectando...</span></p>
+            <p>📦 Tamanho: ~150 MB</p>
+            <p>⚡ Instalação automática</p>
+        </div>
+    </div>
+    
+    <div class="version">v1.0.0</div>
+
+    <script>
+        // Detectar sistema operacional
+        function detectOS() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Windows')) return 'Windows';
+            if (userAgent.includes('Mac')) return 'macOS';
+            if (userAgent.includes('Linux')) return 'Linux';
+            return 'Desconhecido';
+        }
+
+        // URLs dos releases (você deve atualizar com as URLs reais do GitHub)
+        const downloadUrls = {
+            'Windows': 'https://github.com/seu-usuario/simulador-futebol-mundial/releases/latest/download/Simulador-de-Futebol-Mundial-Setup-1.0.0.exe',
+            'macOS': 'https://github.com/seu-usuario/simulador-futebol-mundial/releases/latest/download/Simulador-de-Futebol-Mundial-1.0.0.dmg',
+            'Linux': 'https://github.com/seu-usuario/simulador-futebol-mundial/releases/latest/download/Simulador-de-Futebol-Mundial-1.0.0.AppImage'
+        };
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            const os = detectOS();
+            document.getElementById('systemInfo').textContent = os;
+            
+            if (!downloadUrls[os]) {
+                document.getElementById('downloadBtn').disabled = true;
+                document.getElementById('downloadBtn').textContent = '❌ Sistema não suportado';
+            }
+        });
+
+        // Simular download com progresso
+        function startDownload() {
+            const btn = document.getElementById('downloadBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const status = document.getElementById('status');
+            const os = detectOS();
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Baixando...';
+            progressContainer.style.display = 'block';
+            
+            // Simular progresso
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                progressFill.style.width = progress + '%';
+                
+                if (progress < 30) {
+                    status.textContent = 'Conectando ao servidor...';
+                } else if (progress < 60) {
+                    status.textContent = 'Baixando arquivos...';
+                } else if (progress < 90) {
+                    status.textContent = 'Instalando componentes...';
+                } else if (progress < 100) {
+                    status.textContent = 'Finalizando instalação...';
+                } else {
+                    status.textContent = '✅ Download concluído!';
+                    btn.textContent = '🎮 Iniciar Jogo';
+                    btn.disabled = false;
+                    clearInterval(interval);
+                    
+                    // Iniciar download real
+                    const url = downloadUrls[os];
+                    if (url) {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = '';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                }
+            }, 200);
+        }
+    </script>
+</body>
+</html>

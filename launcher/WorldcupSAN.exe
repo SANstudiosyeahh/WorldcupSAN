@@ -1,0 +1,8 @@
+# Este seria um executável real que abre o launcher HTML
+# Para criar um .exe real, você precisaria usar ferramentas como:
+# - Electron (para criar um app desktop)
+# - PyInstaller (se fosse Python)
+# - Ou compilar com C++/C#
+
+# Por enquanto, este é um placeholder
+# O arquivo HTML acima pode ser aberto diretamente no navegador
